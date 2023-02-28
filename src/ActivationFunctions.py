@@ -1,7 +1,21 @@
 import numpy as np
+from abc import ABC, abstractmethod
+
+
+class Activation(ABC):
+    def __init__(self) -> None:
+        super().__init__()
+    
+    @abstractmethod
+    def forward(self):
+        pass
+
+    @abstractmethod
+    def backward(self):
+        pass
 
 # ReLU activation
-class Activation_ReLU(object):
+class Activation_ReLU(Activation):
     # Forward pass
     def forward(self, inputs):
         # Remember input values
@@ -19,7 +33,7 @@ class Activation_ReLU(object):
         self.dinputs[self.inputs <= 0] = 0
  
 
-class Activation_Sigmoid(object):
+class Activation_Sigmoid(Activation):
     # Forward pass
     def forward(self, inputs):
         # Remember input values
@@ -29,16 +43,13 @@ class Activation_Sigmoid(object):
 
     # Backward pass
     def backward(self, dvalues):
-        # Since we need to modify the original variable,
-        # let's make a copy of the values first
-        self.dinputs = dvalues.copy()
-        
+          
         # Compute the sigmoid derivative
         self.dinputs = dvalues * self.output * (1 - self.output)
 
 
 # Softmax activation
-class Activation_Softmax(object):
+class Activation_Softmax(Activation):
     # Forward pass
     def forward(self, inputs):
         # Remember input values

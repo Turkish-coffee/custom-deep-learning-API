@@ -1,10 +1,23 @@
 import numpy as np
+from abc import ABC, abstractmethod
 
-class Layer_Dense(object):
+class Layer(ABC):
+    def __init__(self) -> None:
+        super().__init__()
+
+    @abstractmethod
+    def forward(self):
+        pass
+
+    @abstractmethod
+    def backward(self):
+        pass
+
+class Layer_Dense(Layer):
     # Layer initialization
-    def __init__(self, n_inputs, n_neurons):
-
-    # Initialize weights and biases
+    def __init__(self, n_inputs, n_neurons) -> None:
+        super().__init__()
+        # Initialize weights and biases
         self.weights = 0.01 * np.random.randn(n_inputs, n_neurons) 
         self.biases = np.zeros((1, n_neurons))
 

@@ -1,10 +1,27 @@
 import numpy as np
+from abc import ABC, abstractmethod
 
-class Optimizer_SGD(object):
+class Optimizer(ABC):
+    def __init__(self) -> None:
+        super().__init__()
+
+    @abstractmethod
+    def pre_update_params(self):
+        pass
+
+    @abstractmethod
+    def update_params(self):
+        pass
+
+    @abstractmethod
+    def post_update_params(self):
+        self.iterations +=1
+class Optimizer_SGD(Optimizer):
 
     # Initialize optimizer - set settings,
     # learning rate of 1. is default for this optimizer
-    def __init__(self, learning_rate=1.0, decay=0.0, momentum=0.9):
+    def __init__(self, learning_rate=1.0, decay=0.0, momentum=0.9) -> None:
+        super().__init__()
         self.learning_rate = learning_rate
         self.current_learning_rate = learning_rate
         self.decay = decay
@@ -57,14 +74,16 @@ class Optimizer_SGD(object):
         layer.biases += bias_updates
 
     def post_update_params(self):
-        self.iterations += 1
+        return super().post_update_params()
 
 
 
 # Adaguard optimizer
-class Optimizer_Adagrad(object): 
+class Optimizer_Adagrad(Optimizer): 
+
     # Initialize optimizer - set settings
-    def __init__(self, learning_rate=1., decay=0., epsilon=1e-7):
+    def __init__(self, learning_rate=1., decay=0., epsilon=1e-7) -> None:
+        super().__init__()
         self.learning_rate = learning_rate
         self.current_learning_rate = learning_rate
         self.decay = decay
@@ -99,15 +118,16 @@ class Optimizer_Adagrad(object):
 
     # Call once after any parameter updates
     def post_update_params(self): 
-        self.iterations += 1
+        return super.post_update_params()
 
 
 
 # RMSprop optimizer
-class Optimizer_RMSprop(object):
+class Optimizer_RMSprop(Optimizer):
 
     # Initialize optimizer - set settings
-    def __init__(self, learning_rate=0.001, decay=0., epsilon=1e-7, rho=0.9):
+    def __init__(self, learning_rate=0.001, decay=0., epsilon=1e-7, rho=0.9) -> None:
+          super().__init__()
           self.learning_rate = learning_rate
           self.current_learning_rate = learning_rate
           self.decay = decay
@@ -143,13 +163,14 @@ class Optimizer_RMSprop(object):
                           (np.sqrt(layer.bias_cache) + self.epsilon)
       # Call once after any parameter updates
     def post_update_params(self):
-        self.iterations += 1
+        return super.post_update_params
 
 
 # Adam optimizer
-class Optimizer_Adam:
+class Optimizer_Adam(Optimizer):
     # Initialize optimizer - set settings
-    def __init__(self, learning_rate=0.001, decay=0., epsilon=1e-7, beta_1=0.9, beta_2=0.999):
+    def __init__(self, learning_rate=0.001, decay=0., epsilon=1e-7, beta_1=0.9, beta_2=0.999) -> None:
+        super().__init__()
         self.learning_rate = learning_rate
         self.current_learning_rate = learning_rate
         self.decay = decay
@@ -207,4 +228,4 @@ class Optimizer_Adam:
                                self.epsilon)
       # Call once after any parameter updates
     def post_update_params(self): 
-        self.iterations += 1
+        return super().post_update_params()

@@ -51,7 +51,7 @@ class Loss_CategoricalCrossentropy(Loss) :
 
 # Softmax classifier - combined Softmax activation
 # and cross-entropy loss for faster backward step
-class Activation_Softmax_Loss_CategoricalCrossentropy(Loss):
+class Activation_Softmax_Loss_CategoricalCrossentropy():
     # Creates activation and loss function objects
     def __init__(self) :
         self.activation = Activation_Softmax()
