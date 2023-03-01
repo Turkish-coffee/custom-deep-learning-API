@@ -19,15 +19,15 @@ plt.show()
 
 
 # Create Dense layer with 2 input features and 64 output values
-dense1 = Layer_Dense(2, 32)
+dense1 = Layer_Dense(2, 64)
 # Create ReLU activation (to be used with Dense layer):
 activation1 = Activation_Sigmoid()
 # Create second Dense layer with 64 input features (as we take output 
 # of previous layer here) and 3 output values (output values)
-dense2 = Layer_Dense(32, 32)
+dense2 = Layer_Dense(64, 64)
 
 activation2 = Activation_Sigmoid()
-dense3 = Layer_Dense(32,3)
+dense3 = Layer_Dense(64,3)
 # Create Softmax activation (to be used with Dense layer):
 
 # Create Softmax classifier's combined loss and activation
@@ -57,8 +57,14 @@ for epoch in range(10001):
     dense3.forward(activation2.output)
     # Perform a forward pass through the activation/loss function
     # takes the output of second dense layer here and returns loss 
-    loss = loss_activation.forward(dense3.output, y)
-
+    data_loss = loss_activation.forward(dense3.output, y)
+    # Calculate regularization penalty
+    regularization_loss = \
+        loss_activation.loss.regularization_loss(dense1) + \
+        loss_activation.loss.regularization_loss(dense2) + \
+        loss_activation.loss.regularization_loss(dense3) 
+    # Calculate overall loss
+    loss = data_loss + regularization_loss
     
     # Calculate accuracy from output of activation2 and targets 
     # calculate values along first axis

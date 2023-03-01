@@ -5,6 +5,9 @@ from abc import ABC, abstractmethod
 class Activation(ABC):
     def __init__(self) -> None:
         super().__init__()
+        self.inputs = None
+        self.output = None
+        self.dinputs = None
     
     @abstractmethod
     def forward(self):
