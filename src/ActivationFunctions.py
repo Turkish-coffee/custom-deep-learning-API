@@ -48,7 +48,7 @@ class Activation_Sigmoid(Activation):
     def backward(self, dvalues):
           
         # Compute the sigmoid derivative
-        self.dinputs = dvalues * self.output * (1 - self.output)
+        self.dinputs = dvalues * (1 - self.output) * self.output
 
 
 # Softmax activation

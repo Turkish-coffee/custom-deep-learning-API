@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from Layers import Layer_Dense
+from Layers import Layer_Dense, Layer_Dropout
 from ActivationFunctions import Activation_ReLU, Activation_Sigmoid
 from Loss import Activation_Softmax_Loss_CategoricalCrossentropy
 from Optimizers import Optimizer_Adam
@@ -23,6 +23,8 @@ dense1 = Layer_Dense(2, 64, weight_regularizer_l2=5e-4,
 bias_regularizer_l2=5e-4)
 # Create ReLU activation (to be used with Dense layer):
 activation1 = Activation_Sigmoid()
+# Create dropout layer
+dropout1 = Layer_Dropout(0.1)
 # Create second Dense layer with 64 input features (as we take output 
 # of previous layer here) and 3 output values (output values)
 dense2 = Layer_Dense(64, 64,weight_regularizer_l2=5e-4,
@@ -51,9 +53,11 @@ for epoch in range(10001):
     # Make a forward pass through activation function
     # it takes the output of first dense layer here
     activation1.forward(dense1.output)
+    # Perform a forward pass through Dropout layer
+    dropout1.forward(activation1.output)
     # Make a forward pass through second Dense layer
     # it takes outputs of activation function of first layer as inputs
-    dense2.forward(activation1.output)
+    dense2.forward(dropout1.output)
     
     activation2.forward(dense2.output)
 
@@ -90,7 +94,8 @@ for epoch in range(10001):
     dense3.backward(loss_activation.dinputs)
     activation2.backward(dense3.dinputs)
     dense2.backward(activation2.dinputs)
-    activation1.backward(dense2.dinputs)
+    dropout1.backward(dense2.dinputs)
+    activation1.backward(dropout1.dinputs)
     dense1.backward(activation1.dinputs)
 
     # Update weights and biases
