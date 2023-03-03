@@ -19,15 +19,18 @@ plt.show()
 
 
 # Create Dense layer with 2 input features and 64 output values
-dense1 = Layer_Dense(2, 64)
+dense1 = Layer_Dense(2, 64, weight_regularizer_l2=5e-4,
+bias_regularizer_l2=5e-4)
 # Create ReLU activation (to be used with Dense layer):
 activation1 = Activation_Sigmoid()
 # Create second Dense layer with 64 input features (as we take output 
 # of previous layer here) and 3 output values (output values)
-dense2 = Layer_Dense(64, 64)
+dense2 = Layer_Dense(64, 64,weight_regularizer_l2=5e-4,
+bias_regularizer_l2=5e-4)
 
 activation2 = Activation_Sigmoid()
-dense3 = Layer_Dense(64,3)
+dense3 = Layer_Dense(64,3,weight_regularizer_l2=5e-4,
+bias_regularizer_l2=5e-4)
 # Create Softmax activation (to be used with Dense layer):
 
 # Create Softmax classifier's combined loss and activation
@@ -60,9 +63,9 @@ for epoch in range(10001):
     data_loss = loss_activation.forward(dense3.output, y)
     # Calculate regularization penalty
     regularization_loss = \
-        loss_activation.loss.regularization_loss(dense1) + \
-        loss_activation.loss.regularization_loss(dense2) + \
-        loss_activation.loss.regularization_loss(dense3) 
+    loss_activation.loss.regularization_loss(dense1) + \
+    loss_activation.loss.regularization_loss(dense2) + \
+    loss_activation.loss.regularization_loss(dense3) 
     # Calculate overall loss
     loss = data_loss + regularization_loss
     
@@ -73,11 +76,13 @@ for epoch in range(10001):
         y = np.argmax(y, axis=1)
     accuracy = np.mean(predictions==y)
 
-    if not epoch % 400:
+    if not epoch % 100:
         print(f'epoch: {epoch}, ' +
-            f'acc: {accuracy:.3f}, ' + 
-            f'loss: {loss:.3f}' +
-            f'lr: {optimizer.current_learning_rate}')
+        f'acc: {accuracy:.3f}, ' +
+        f'loss: {loss:.3f} (' +
+        f'data_loss: {data_loss:.3f}, ' +
+        f'reg_loss: {regularization_loss:.3f}), ' +
+        f'lr: {optimizer.current_learning_rate}')
     
 
     # Backward pass
