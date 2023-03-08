@@ -17,10 +17,15 @@ class Activation(ABC):
     def backward(self):
         pass
 
+    @abstractmethod
+    # Calculate predictions for outputs
+    def predictions(self, outputs):
+        return outputs
+    
 # ReLU activation
 class Activation_ReLU(Activation):
     # Forward pass
-    def forward(self, inputs):
+    def forward(self, inputs, training):
         # Remember input values
         self.inputs = inputs
         # Calculate output values from inputs
@@ -35,10 +40,13 @@ class Activation_ReLU(Activation):
         # Zero gradient where input values were negative
         self.dinputs[self.inputs <= 0] = 0
  
+    # Calculate predictions for outputs
+    def predictions(self, outputs):
+        return super().predictions()
 
 class Activation_Sigmoid(Activation):
     # Forward pass
-    def forward(self, inputs):
+    def forward(self, inputs, training):
         # Remember input values
         self.inputs = inputs
         # Calculate output values from inputs
@@ -49,12 +57,15 @@ class Activation_Sigmoid(Activation):
           
         # Compute the sigmoid derivative
         self.dinputs = dvalues * (1 - self.output) * self.output
-
+    
+    # Calculate predictions for outputs
+    def predictions(self, outputs):
+       return (outputs > 0.5) * 1
 
 # Softmax activation
 class Activation_Softmax(Activation):
     # Forward pass
-    def forward(self, inputs):
+    def forward(self, inputs, training):
         # Remember input values
         self.inputs = inputs
         # Get unnormalized probabilities
@@ -78,3 +89,24 @@ class Activation_Softmax(Activation):
             # Calculate sample-wise gradient
             # and add it to the array of sample gradients ​
             self.dinputs[index] = np.dot(jacobian_matrix, single_dvalues)
+
+    # Calculate predictions for outputs
+    def predictions(self, outputs):
+        return np.argmax(outputs, axis=1) 
+    
+
+# Linear activation
+class Activation_Linear(Activation):
+    # Forward pass
+    def forward(self, inputs, training):
+        # Just remember values
+        self.inputs = inputs
+        self.output = inputs
+    # Backward pass
+    def backward(self, dvalues):
+        # derivative is 1, 1 * dvalues = dvalues - the chain rule
+        self.dinputs = dvalues.copy()
+    
+    # Calculate predictions for outputs
+    def predictions(self, outputs):
+        return super().predictions(outputs)

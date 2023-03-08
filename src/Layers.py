@@ -23,7 +23,7 @@ class Layer_Dense(Layer):
         bias_regularizer_l1=0, bias_regularizer_l2=0) -> None:
         super().__init__()
         # Initialize weights and biases
-        self.weights = 0.01 * np.random.randn(n_inputs, n_neurons)
+        self.weights = 0.1 * np.random.randn(n_inputs, n_neurons)
         self.biases = np.zeros((1, n_neurons))
         # Set regularization strength
         self.weight_regularizer_l1 = weight_regularizer_l1
@@ -32,7 +32,7 @@ class Layer_Dense(Layer):
         self.bias_regularizer_l2 = bias_regularizer_l2
          
     # Forward pass
-    def forward(self, inputs):
+    def forward(self, inputs, training):
 
         # storing inputs to compute partial derivative later on 
         self.inputs = inputs
@@ -82,9 +82,14 @@ class Layer_Dropout(Layer):
         # of 0.1 we need success rate of 0.9
         self.rate = 1 - rate
     # Forward pass
-    def forward(self, inputs):
+    def forward(self, inputs, training):
         # Save input values
         self.inputs = inputs
+
+        # If not in the training mode - return values
+        if not training:
+            self.output = inputs.copy()
+            return
         # Generate and save scaled mask
         self.binary_mask = np.random.binomial(1, self.rate,
         size=inputs.shape) / self.rate
@@ -94,3 +99,15 @@ class Layer_Dropout(Layer):
     def backward(self, dvalues):
         # Gradient on values
         self.dinputs = dvalues * self.binary_mask
+
+# Input layer class
+class Layer_Input(Layer):
+    # Forward pass
+    def forward(self,inputs, training):
+        self.output = inputs
+    
+    # this is the only layer which do not contain
+    # any backward methods (this isn't even a layer)
+
+    def backward(self):
+        return super().backward()
