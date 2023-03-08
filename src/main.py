@@ -39,4 +39,4 @@ accuracy=Accuracy_Categorical()
 model.finalize()
 # Train the model
 model.train(X, y, validation_data=(X_test, y_test),
-epochs=10000, print_every=100)
+epochs=100, batch_size=128, print_every=1000)

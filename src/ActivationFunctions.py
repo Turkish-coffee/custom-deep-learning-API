@@ -42,7 +42,7 @@ class Activation_ReLU(Activation):
  
     # Calculate predictions for outputs
     def predictions(self, outputs):
-        return super().predictions()
+        return super().predictions(outputs)
 
 class Activation_Sigmoid(Activation):
     # Forward pass
