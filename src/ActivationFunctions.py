@@ -3,7 +3,9 @@ from abc import ABC, abstractmethod
 
 
 class Activation(ABC):
+
     def __init__(self) -> None:
+
         super().__init__()
         self.inputs = None
         self.output = None
@@ -24,15 +26,19 @@ class Activation(ABC):
     
 # ReLU activation
 class Activation_ReLU(Activation):
+
     # Forward pass
     def forward(self, inputs, training):
+
         # Remember input values
         self.inputs = inputs
+
         # Calculate output values from inputs
         self.output = np.maximum(0, inputs)
 
     # Backward pass
     def backward(self, dvalues):
+
         # Since we need to modify the original variable,
         # let's make a copy of the values first
         self.dinputs = dvalues.copy()
@@ -44,11 +50,15 @@ class Activation_ReLU(Activation):
     def predictions(self, outputs):
         return super().predictions(outputs)
 
+
 class Activation_Sigmoid(Activation):
+
     # Forward pass
     def forward(self, inputs, training):
+
         # Remember input values
         self.inputs = inputs
+
         # Calculate output values from inputs
         self.output = 1/(1 + np.exp(-inputs))
 
@@ -62,30 +72,40 @@ class Activation_Sigmoid(Activation):
     def predictions(self, outputs):
        return (outputs > 0.5) * 1
 
+
 # Softmax activation
 class Activation_Softmax(Activation):
+
     # Forward pass
     def forward(self, inputs, training):
+
         # Remember input values
         self.inputs = inputs
+
         # Get unnormalized probabilities
         exp_values = np.exp(inputs - np.max(inputs, axis=1,keepdims=True))
+
         # Normalize them for each sample
         probabilities = exp_values / np.sum(exp_values, axis=1, keepdims=True)
         self.output = probabilities
     
     # Backward pass 
     def backward(self, dvalues):
+
         # Create uninitialized array
         self.dinputs = np.empty_like(dvalues)
+
         # Enumerate outputs and gradients
         for index, (single_output, single_dvalues) in \
                     enumerate(zip(self.output, dvalues)):
+            
             # Flatten output array
             single_output = single_output.reshape(-1, 1)
+
             # Calculate Jacobian matrix of the output and
             jacobian_matrix = np.diagflat(single_output) - \
                               np.dot(single_output, single_output.T)
+            
             # Calculate sample-wise gradient
             # and add it to the array of sample gradients ​
             self.dinputs[index] = np.dot(jacobian_matrix, single_dvalues)
@@ -97,11 +117,14 @@ class Activation_Softmax(Activation):
 
 # Linear activation
 class Activation_Linear(Activation):
+
     # Forward pass
     def forward(self, inputs, training):
+
         # Just remember values
         self.inputs = inputs
         self.output = inputs
+        
     # Backward pass
     def backward(self, dvalues):
         # derivative is 1, 1 * dvalues = dvalues - the chain rule

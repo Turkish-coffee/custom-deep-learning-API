@@ -17,20 +17,25 @@ class Layer(ABC):
         pass
 
 class Layer_Dense(Layer):
+
     # Layer initialization
     def __init__(self, n_inputs, n_neurons,
         weight_regularizer_l1=0, weight_regularizer_l2=0,
         bias_regularizer_l1=0, bias_regularizer_l2=0) -> None:
         super().__init__()
+
         # Initialize weights and biases
         self.weights = 0.01 * np.random.randn(n_inputs, n_neurons)
         self.biases = np.zeros((1, n_neurons))
+
         # Set regularization strength
         self.weight_regularizer_l1 = weight_regularizer_l1
         self.weight_regularizer_l2 = weight_regularizer_l2
         self.bias_regularizer_l1 = bias_regularizer_l1
         self.bias_regularizer_l2 = bias_regularizer_l2
          
+
+
     # Forward pass
     def forward(self, inputs, training):
 
@@ -73,14 +78,30 @@ class Layer_Dense(Layer):
         # Gradient on values
         self.dinputs = np.dot(dvalues, self.weights.T)
 
+    
+
+    # Retrieve layer parameters
+    def get_parameters(self):
+      return self.weights, self.biases
+
+
+    # Set weights and biases in a layer instance
+    def set_parameters(self, weights, biases):
+        self.weights = weights
+        self.biases = biases
+
 # Dropout
 class Layer_Dropout(Layer):
+
     # Init
     def __init__(self, rate) -> None:
         super().__init__()
+
         # Store rate, we invert it as for example for dropout
         # of 0.1 we need success rate of 0.9
         self.rate = 1 - rate
+
+
     # Forward pass
     def forward(self, inputs, training):
         # Save input values
@@ -90,18 +111,23 @@ class Layer_Dropout(Layer):
         if not training:
             self.output = inputs.copy()
             return
+        
         # Generate and save scaled mask
         self.binary_mask = np.random.binomial(1, self.rate,
         size=inputs.shape) / self.rate
+
         # Apply mask to output values
         self.output = inputs * self.binary_mask
+
         # Backward pass
     def backward(self, dvalues):
         # Gradient on values
         self.dinputs = dvalues * self.binary_mask
+    
 
 # Input layer class
 class Layer_Input(Layer):
+    
     # Forward pass
     def forward(self,inputs, training):
         self.output = inputs
